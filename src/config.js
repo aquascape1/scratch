@@ -1,4 +1,6 @@
 export default {
+  STRIPE_KEY: "pk_test_51H8IhmK0MCriChhAEPTZKlp2OvXhYy4TI88jsU6aWwZG9Fzap13nU5K87J8nZRCQOytQSPK6qIXMnSOtU3epygbT00yzjSaZ8",
+  MAX_ATTACHMENT_SIZE: 5000000,
   s3: {
     REGION: "us-west-2",
     BUCKET: "coffee-chat-app-api-dev-serverlessdeploymentbucke-4tcviv0itrnz"
