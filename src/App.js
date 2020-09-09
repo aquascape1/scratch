@@ -45,7 +45,7 @@ function App() {
         <Navbar fluid collapseOnSelect>
           <Navbar.Header>
             <Navbar.Brand>
-              <Link to="/">Scratch</Link>
+              <Link to="/">CoffeeChatBroker</Link>
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>
@@ -53,6 +53,9 @@ function App() {
             <Nav pullRight>
               {isAuthenticated ? (
                 <>
+                  <LinkContainer to="/profile">
+                  <NavItem>Profile</NavItem>
+                  </LinkContainer>
                   <LinkContainer to="/settings">
                     <NavItem>Settings</NavItem>
                   </LinkContainer>

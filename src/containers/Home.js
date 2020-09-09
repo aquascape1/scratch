@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { PageHeader, ListGroup, ListGroupItem } from "react-bootstrap";
 import { useAppContext } from "../libs/contextLib";
 import { onError } from "../libs/errorLib";
+import Basic from "../components/dataTable";
 import "./Home.css";
 import { API } from "aws-amplify";
 import { LinkContainer } from "react-router-bootstrap";
@@ -10,6 +11,37 @@ export default function Home() {
   const [notes, setNotes] = useState([]);
   const { isAuthenticated } = useAppContext();
   const [isLoading, setIsLoading] = useState(true);
+  const [tableData, setTableData] = useState([]);
+  const [dataTable, setDataTable] = useState({
+    columns: [
+      {
+        label: 'personName',
+        field: 'personName',
+        width: 150,
+        attributes: {
+          'aria-controls': 'DataTable',
+          'aria-label': 'personName',
+        },
+      },
+      {
+        label: 'company',
+        field: 'company',
+        width: 270,
+      },
+      {
+        label: 'email',
+        field: 'email',
+        width: 200,
+      },
+    ],
+    rows: [
+    JSON.stringify(tableData)
+    // API.get("notes", "/users/getAllUsers")
+    ]
+  });
+
+  console.log(tableData);
+  console.log(dataTable);
 
   useEffect(() => {
     async function onLoad() {
@@ -20,6 +52,9 @@ export default function Home() {
       try {
         const notes = await loadNotes();
         setNotes(notes);
+        const tableData = await loadTable();
+        setTableData(tableData);
+
       } catch (e) {
         onError(e);
       }
@@ -33,6 +68,10 @@ export default function Home() {
   function loadNotes() {
     return API.get("notes", "/notes");
   }
+
+  function loadTable(): Promise<string> {
+      return API.get("notes", "/users/getAllUsers");
+    }
 
   function renderNotesList(notes) {
     return [{}].concat(notes).map((note, i) =>
@@ -57,8 +96,8 @@ export default function Home() {
   function renderLander() {
     return (
       <div className="lander">
-        <h1>Scratch</h1>
-        <p>A simple note taking app</p>
+        <h1>CCB</h1>
+        <p>Effective Networking</p>
       </div>
     );
   }
@@ -76,6 +115,8 @@ export default function Home() {
 
   return (
     <div className="Home">
+      <PageHeader>Professionals</PageHeader>
+      <Basic tableData={tableData}/>
       {isAuthenticated ? renderNotes() : renderLander()}
     </div>
   );

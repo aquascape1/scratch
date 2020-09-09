@@ -12,6 +12,7 @@ import { useFormFields } from "../libs/hooksLib";
 import { onError } from "../libs/errorLib";
 import "./Signup.css";
 import { Auth } from "aws-amplify";
+import { API } from "aws-amplify";
 
 export default function Signup() {
   const [fields, handleFieldChange] = useFormFields({
@@ -31,6 +32,13 @@ export default function Signup() {
       fields.password.length > 0 &&
       fields.password === fields.confirmPassword
     );
+  }
+
+  //creates the user with the email in our user table
+  function createUser(user) {
+    return API.post("notes", "/users", {
+      body: user
+    });
   }
 
   function validateConfirmationForm() {
@@ -64,6 +72,7 @@ export default function Signup() {
       await Auth.confirmSignUp(fields.email, fields.confirmationCode);
       await Auth.signIn(fields.email, fields.password);
 
+      createUser({email:fields.email})
       userHasAuthenticated(true);
       history.push("/");
     } catch (e) {
