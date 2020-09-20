@@ -2,46 +2,16 @@ import React, { useState, useEffect } from "react";
 import { PageHeader, ListGroup, ListGroupItem } from "react-bootstrap";
 import { useAppContext } from "../libs/contextLib";
 import { onError } from "../libs/errorLib";
-import Basic from "../components/dataTable";
+import App from "../components/dataTable";
 import "./Home.css";
 import { API } from "aws-amplify";
 import { LinkContainer } from "react-router-bootstrap";
 
 export default function Home() {
-  const [notes, setNotes] = useState([]);
+  // const [notes, setNotes] = useState([]);
   const { isAuthenticated } = useAppContext();
   const [isLoading, setIsLoading] = useState(true);
   const [tableData, setTableData] = useState([]);
-  const [dataTable, setDataTable] = useState({
-    columns: [
-      {
-        label: 'personName',
-        field: 'personName',
-        width: 150,
-        attributes: {
-          'aria-controls': 'DataTable',
-          'aria-label': 'personName',
-        },
-      },
-      {
-        label: 'company',
-        field: 'company',
-        width: 270,
-      },
-      {
-        label: 'email',
-        field: 'email',
-        width: 200,
-      },
-    ],
-    rows: [
-    JSON.stringify(tableData)
-    // API.get("notes", "/users/getAllUsers")
-    ]
-  });
-
-  console.log(tableData);
-  console.log(dataTable);
 
   useEffect(() => {
     async function onLoad() {
@@ -50,11 +20,8 @@ export default function Home() {
       }
 
       try {
-        const notes = await loadNotes();
-        setNotes(notes);
         const tableData = await loadTable();
         setTableData(tableData);
-
       } catch (e) {
         onError(e);
       }
@@ -65,33 +32,13 @@ export default function Home() {
     onLoad();
   }, [isAuthenticated]);
 
-  function loadNotes() {
-    return API.get("notes", "/notes");
-  }
+  // function loadNotes() {
+  //   return API.get("notes", "/notes");
+  // }
 
   function loadTable(): Promise<string> {
       return API.get("notes", "/users/getAllUsers");
     }
-
-  function renderNotesList(notes) {
-    return [{}].concat(notes).map((note, i) =>
-      i !== 0 ? (
-        <LinkContainer key={note.noteId} to={`/notes/${note.noteId}`}>
-          <ListGroupItem header={note.content.trim().split("\n")[0]}>
-            {"Created: " + new Date(note.createdAt).toLocaleString()}
-          </ListGroupItem>
-        </LinkContainer>
-      ) : (
-        <LinkContainer key="new" to="/notes/new">
-          <ListGroupItem>
-            <h4>
-              <b>{"\uFF0B"}</b> Create a new note
-            </h4>
-          </ListGroupItem>
-        </LinkContainer>
-      )
-    );
-  }
 
   function renderLander() {
     return (
@@ -102,22 +49,28 @@ export default function Home() {
     );
   }
 
-  function renderNotes() {
+  // function renderNotes() {
+  //   return (
+  //     <div className="notes">
+  //       <PageHeader>Your Notes</PageHeader>
+  //       <ListGroup>
+  //         {!isLoading && renderNotesList(notes)}
+  //       </ListGroup>
+  //     </div>
+  //   );
+  // }
+
+  function renderTable() {
     return (
-      <div className="notes">
-        <PageHeader>Your Notes</PageHeader>
-        <ListGroup>
-          {!isLoading && renderNotesList(notes)}
-        </ListGroup>
+      <div className="Home">
+        <App tableData={tableData}/>
       </div>
     );
   }
 
   return (
     <div className="Home">
-      <PageHeader>Professionals</PageHeader>
-      <Basic tableData={tableData}/>
-      {isAuthenticated ? renderNotes() : renderLander()}
+      {isAuthenticated ? renderTable() : renderLander()}
     </div>
   );
 }

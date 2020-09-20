@@ -4,7 +4,7 @@ import { CardElement, injectStripe } from "react-stripe-elements";
 import LoaderButton from "./LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 
-function ProfileForm({ isLoading, onSubmit, email, personName, company, ...props }) {
+function ProfileForm({isLoading, onSubmit, email, personName, company}) {
   const [fields, handleFieldChange] = useFormFields({
     personName: "",
     company: ""

@@ -7,6 +7,7 @@ import ProfileForm from "../components/ProfileForm.js";
 import { onError } from "../libs/errorLib";
 import config from "../config";
 import "./Profile.css";
+import Calendar from "../components/Calendar";
 
 export default function Profile() {
   const history = useHistory();
@@ -15,6 +16,7 @@ export default function Profile() {
   const [personName, setPersonName] = useState("");
   const [company, setCompany] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [calendar, setCalendar] = useState([]);
 
   useEffect(() => {
     async function onLoad() {
@@ -24,6 +26,11 @@ export default function Profile() {
         setEmail(email);
         setPersonName(personName);
         setCompany(company);
+
+        const profileCalendar = await loadCalendar();
+        setCalendar(profileCalendar);
+        console.log(company);
+        console.log(calendar);
       } catch (e) {
         onError(e);
       }
@@ -42,13 +49,33 @@ export default function Profile() {
     });
   }
 
+  function loadCalendar() {
+    return API.get("notes", "/calendar");
+  }
+
+  function updateCalendar(calendar) {
+    return API.put("notes", "/calendar", {
+      body: {calendar}
+    });
+  }
+
   async function handleFormSubmit(personName, company) {
     setIsLoading(true);
 
     try {
-      //missing api call
       updateProfile(personName,company);
-      history.push("/");
+      setIsLoading(false);
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
+  }
+
+  async function handleSubmitCalendar(calendar) {
+    setIsLoading(true);
+    try {
+      updateCalendar(calendar);
+      setIsLoading(false);
     } catch (e) {
       onError(e);
       setIsLoading(false);
@@ -56,9 +83,14 @@ export default function Profile() {
   }
 
   return (
-    <div className="Profile">
-    <ProfileForm isLoading={isLoading} onSubmit={handleFormSubmit} email={email}
-    personName={personName} company={company}/>
+    <div className="ProfileContainer">
+      <div className="Profile">
+      <ProfileForm isLoading={isLoading} onSubmit={handleFormSubmit} email={email}
+      personName={personName} company={company}/>
+      </div>
+      <div className="Calendar">
+      <Calendar calendar={calendar} onChange={handleSubmitCalendar}/>
+      </div>
     </div>
   );
 }

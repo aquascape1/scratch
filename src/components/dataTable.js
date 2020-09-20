@@ -1,32 +1,43 @@
-import React, { useState, useEffect } from "react";
-import { MDBDataTableV5 } from 'mdbreact';
+import React from 'react'
+import styled from 'styled-components'
+import { useTable, usePagination } from 'react-table'
 
-export default function Basic(tableData) {
-  const [datatable, setDatatable] = useState({
-    columns: [
+import MaUTable from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+
+import EnhancedTable from './EnhancedTable'
+
+const App = (tableData) => {
+  var dataTableLength = JSON.stringify(tableData).length-1;
+  var insert = JSON.parse(JSON.stringify(tableData).substring(13,dataTableLength));
+  const columns = React.useMemo(
+    () => [
       {
-        label: 'personName',
-        field: 'personName',
-        width: 150,
-        attributes: {
-          'aria-controls': 'DataTable',
-          'aria-label': 'personName',
-        },
+        Header: 'Name',
+        accessor: 'personName',
       },
       {
-        label: 'company',
-        field: 'company',
-        width: 270,
+        Header: 'Company',
+        accessor: 'company',
       },
       {
-        label: 'email',
-        field: 'email',
-        width: 200,
-      }
-    ],
-    rows: []
-  });
-  console.log(tableData);
-  console.log(datatable);
-  return <MDBDataTableV5 hover entriesOptions={[5, 20, 25]} entries={5} pagesAmount={4} data={datatable} />;
+        Header: 'Email',
+        accessor: 'email',
+      },
+    ]
+  )
+
+  return (
+    <div>
+      <EnhancedTable
+        columns={columns}
+        data={insert}
+      />
+    </div>
+  )
 }
+
+export default App
