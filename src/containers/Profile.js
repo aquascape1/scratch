@@ -17,20 +17,28 @@ export default function Profile() {
   const [company, setCompany] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [calendar, setCalendar] = useState([]);
+  const [calIsLoading, setCalIsLoading] = useState(false);
+  const [calLoad, setCalLoad] = useState(false);
 
   useEffect(() => {
     async function onLoad() {
       try {
+        setCalLoad(true);
         const profile = await loadProfile();
         const { email, personName, company } = profile;
         setEmail(email);
         setPersonName(personName);
         setCompany(company);
-
+        // console.log(company);
         const profileCalendar = await loadCalendar();
-        setCalendar(profileCalendar);
-        console.log(company);
-        console.log(calendar);
+        console.log("loading Calendar");
+        // while(profileCalendar.length==0){
+        //   console.log("looping");
+        // }
+        setCalendar(profileCalendar.calendar);
+        // console.log(calendar);
+        // console.log(profileCalendar);
+        setCalLoad(false);
       } catch (e) {
         onError(e);
       }
@@ -38,6 +46,10 @@ export default function Profile() {
     }
     onLoad();
   }, []);
+
+  function loadCalendar() {
+    return API.get("notes", "/calendar");
+  }
 
   function loadProfile() {
     return API.get("notes", `/users`);
@@ -49,10 +61,6 @@ export default function Profile() {
     });
   }
 
-  function loadCalendar() {
-    return API.get("notes", "/calendar");
-  }
-
   function updateCalendar(calendar) {
     return API.put("notes", "/calendar", {
       body: {calendar}
@@ -61,7 +69,6 @@ export default function Profile() {
 
   async function handleFormSubmit(personName, company) {
     setIsLoading(true);
-
     try {
       updateProfile(personName,company);
       setIsLoading(false);
@@ -72,13 +79,16 @@ export default function Profile() {
   }
 
   async function handleSubmitCalendar(calendar) {
-    setIsLoading(true);
+    setCalIsLoading(true);
     try {
       updateCalendar(calendar);
-      setIsLoading(false);
-    } catch (e) {
+      setCalendar(calendar);
+      setCalIsLoading(false);
+      console.log("handleSubmitCalendar");
+    }
+    catch (e) {
       onError(e);
-      setIsLoading(false);
+      setCalIsLoading(false);
     }
   }
 
@@ -89,7 +99,7 @@ export default function Profile() {
       personName={personName} company={company}/>
       </div>
       <div className="Calendar">
-      <Calendar calendar={calendar} onChange={handleSubmitCalendar}/>
+      <Calendar calendar={calendar} handleSubmitCalendar={handleSubmitCalendar} calLoad={calLoad} calIsLoading={calIsLoading}/>
       </div>
     </div>
   );
